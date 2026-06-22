@@ -17,8 +17,21 @@ jobs:
           python-version: 3.x
 
       - name: Check DCO
+        id: dco_check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip3 install -U dco-check
           dco-check --verbose --exclude-pattern 'pre-commit-ci\[bot\]@users\.noreply\.github\.com'
+
+      - name: Suggest rebase on DCO failure
+        if: failure() && steps.dco_check.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## DCO Check Failed\n\nPlease sign off your commits. You can do this by rebasing and signing off all commits in your PR:\n\n\`\`\`bash\ngit rebase --signoff HEAD~$(git rev-list --count HEAD ^origin/${{ github.base_ref }})\n\`\`\`\n\nOr sign off each commit individually with:\n\n\`\`\`bash\ngit commit --amend --signoff\n\`\`\``
+            })
