@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// cspell : ignore circumradius
-
 #ifndef AUTOWARE__PROXIMITY_HAZARD_CHECKER__PROXIMITY_HAZARD_CHECKER_HPP_
 #define AUTOWARE__PROXIMITY_HAZARD_CHECKER__PROXIMITY_HAZARD_CHECKER_HPP_
 
