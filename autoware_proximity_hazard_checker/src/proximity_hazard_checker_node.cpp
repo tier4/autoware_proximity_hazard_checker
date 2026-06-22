@@ -35,8 +35,7 @@
 
 namespace autoware::proximity_hazard_checker
 {
-ProximityHazardCheckerNode::ProximityHazardCheckerNode(
-  const rclcpp::NodeOptions & options)
+ProximityHazardCheckerNode::ProximityHazardCheckerNode(const rclcpp::NodeOptions & options)
 : rclcpp::Node("proximity_hazard_checker", options)
 {
   param_listener_ =
@@ -51,8 +50,8 @@ ProximityHazardCheckerNode::ProximityHazardCheckerNode(
   const auto vehicle_info = autoware::vehicle_info_utils::VehicleInfoUtils(*this).getVehicleInfo();
   vehicle_footprint_ = vehicle_info.createFootprint();
 
-  impl_ = std::make_unique<ProximityHazardChecker>(
-    param_listener_->get_params(), vehicle_footprint_);
+  impl_ =
+    std::make_unique<ProximityHazardChecker>(param_listener_->get_params(), vehicle_footprint_);
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
   tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
@@ -296,5 +295,4 @@ void ProximityHazardCheckerNode::publish_sector_markers(const std::string & fram
 }  // namespace autoware::proximity_hazard_checker
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(
-  autoware::proximity_hazard_checker::ProximityHazardCheckerNode)
+RCLCPP_COMPONENTS_REGISTER_NODE(autoware::proximity_hazard_checker::ProximityHazardCheckerNode)

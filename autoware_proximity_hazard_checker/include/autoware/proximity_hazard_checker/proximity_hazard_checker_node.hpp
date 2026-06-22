@@ -17,11 +17,11 @@
 
 #include "autoware/proximity_hazard_checker/proximity_hazard_checker.hpp"
 
-#include <autoware_proximity_hazard_checker/msg/proximity_hazard_objects.hpp>
 #include <autoware_utils_rclcpp/polling_subscriber.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_perception_msgs/msg/predicted_objects.hpp>
+#include <autoware_proximity_hazard_checker_msgs/msg/proximity_hazard_objects.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 
@@ -34,7 +34,7 @@
 namespace autoware::proximity_hazard_checker
 {
 using autoware_perception_msgs::msg::PredictedObjects;
-using autoware_proximity_hazard_checker::msg::ProximityHazardObjects;
+using autoware_proximity_hazard_checker_msgs::msg::ProximityHazardObjects;
 using nav_msgs::msg::Odometry;
 
 class ProximityHazardCheckerNode : public rclcpp::Node

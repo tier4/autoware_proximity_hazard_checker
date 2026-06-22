@@ -16,11 +16,11 @@
 #define AUTOWARE__PROXIMITY_HAZARD_CHECKER__PROXIMITY_HAZARD_CHECKER_HPP_
 
 #include <autoware_proximity_hazard_checker/autoware_proximity_hazard_checker_param.hpp>
-#include <autoware_proximity_hazard_checker/msg/proximity_hazard_objects.hpp>
 #include <autoware_utils_geometry/boost_geometry.hpp>
 
 #include <autoware_perception_msgs/msg/predicted_objects.hpp>
 #include <autoware_perception_msgs/msg/shape.hpp>
+#include <autoware_proximity_hazard_checker_msgs/msg/proximity_hazard_objects.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 
 #include <cstdint>
@@ -29,7 +29,7 @@
 namespace autoware::proximity_hazard_checker
 {
 using autoware_perception_msgs::msg::PredictedObjects;
-using autoware_proximity_hazard_checker::msg::ProximityHazardObjects;
+using autoware_proximity_hazard_checker_msgs::msg::ProximityHazardObjects;
 using autoware_utils_geometry::LinearRing2d;
 using autoware_utils_geometry::Polygon2d;
 
@@ -38,8 +38,7 @@ constexpr int g_num_sectors = 8;
 class ProximityHazardChecker
 {
 public:
-  ProximityHazardChecker(
-    proximity_hazard_object::Params params, LinearRing2d vehicle_footprint);
+  ProximityHazardChecker(proximity_hazard_object::Params params, LinearRing2d vehicle_footprint);
 
   // Build the per-sector hazard message from a PredictedObjects input and the
   // transform from the input's frame to base_link.

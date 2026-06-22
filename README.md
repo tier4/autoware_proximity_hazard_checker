@@ -13,35 +13,35 @@ Both message types are defined inside this package (no separate msgs package).
 
 ### `ProximityHazardObject`
 
-| Field | Type | Description |
-|---|---|---|
-| `has_object` | `bool` | `true` if a nearby object is present in this sector |
-| `distance_m` | `float32` | Polygon-to-polygon distance [m]; valid iff `has_object` |
+| Field              | Type                                       | Description                                                            |
+| ------------------ | ------------------------------------------ | ---------------------------------------------------------------------- |
+| `has_object`       | `bool`                                     | `true` if a nearby object is present in this sector                    |
+| `distance_m`       | `float32`                                  | Polygon-to-polygon distance [m]; valid iff `has_object`                |
 | `predicted_object` | `autoware_perception_msgs/PredictedObject` | Source perception object, propagated unchanged; valid iff `has_object` |
 
 ### `ProximityHazardObjects`
 
 An array of exactly 8 `ProximityHazardObject` entries, one per sector:
 
-| Index constant | Value | Direction |
-|---|---|---|
-| `FRONT` | 0 | Forward |
-| `FRONT_RIGHT` | 1 | Forward-right |
-| `RIGHT` | 2 | Right |
-| `REAR_RIGHT` | 3 | Rear-right |
-| `REAR` | 4 | Rearward |
-| `REAR_LEFT` | 5 | Rear-left |
-| `LEFT` | 6 | Left |
-| `FRONT_LEFT` | 7 | Forward-left |
+| Index constant | Value | Direction     |
+| -------------- | ----- | ------------- |
+| `FRONT`        | 0     | Forward       |
+| `FRONT_RIGHT`  | 1     | Forward-right |
+| `RIGHT`        | 2     | Right         |
+| `REAR_RIGHT`   | 3     | Rear-right    |
+| `REAR`         | 4     | Rearward      |
+| `REAR_LEFT`    | 5     | Rear-left     |
+| `LEFT`         | 6     | Left          |
+| `FRONT_LEFT`   | 7     | Forward-left  |
 
 ## Topics
 
-| Direction | Topic | Type |
-|---|---|---|
-| Input | `~/input/objects` (default: `/perception/object_recognition/objects`) | `autoware_perception_msgs/PredictedObjects` |
-| Input | `~/input/odometry` (default: `/localization/kinematic_state`) | `nav_msgs/Odometry` |
-| Output | `~/output/proximity_hazards` (default: `/hmi/proximity_hazards`) | `autoware_proximity_hazard_checker/ProximityHazardObjects` |
-| Debug | `~/debug/sector_markers` | `visualization_msgs/MarkerArray` |
+| Direction | Topic                                                                 | Type                                                       |
+| --------- | --------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Input     | `~/input/objects` (default: `/perception/object_recognition/objects`) | `autoware_perception_msgs/PredictedObjects`                |
+| Input     | `~/input/odometry` (default: `/localization/kinematic_state`)         | `nav_msgs/Odometry`                                        |
+| Output    | `~/output/proximity_hazards` (default: `/hmi/proximity_hazards`)      | `autoware_proximity_hazard_checker/ProximityHazardObjects` |
+| Debug     | `~/debug/sector_markers`                                              | `visualization_msgs/MarkerArray`                           |
 
 ## Parameters
 
