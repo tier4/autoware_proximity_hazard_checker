@@ -16,10 +16,15 @@ jobs:
       matrix:
         rosdistro:
           - humble
+          - jazzy
         include:
           - rosdistro: humble
-            container: ros:humble
+            container: ghcr.io/autowarefoundation/autoware:universe-dependencies-humble
             build-depends-repos: build_depends.repos
+          - rosdistro: jazzy
+            container: ghcr.io/autowarefoundation/autoware:universe-dependencies-jazzy
+            build-depends-repos: build_depends.repos
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
