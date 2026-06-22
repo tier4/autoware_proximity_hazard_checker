@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "autoware_proximity_hazard_checker",
+  "type": "object",
+  "properties": {
+    "/**": {
+      "type": "object",
+      "properties": {
+        "ros__parameters": {
+          "$ref": "#/definitions/proximity_hazard_checker_params"
+        }
+      },
+      "required": ["ros__parameters"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["/**"],
+  "additionalProperties": false,
+  "definitions": {
+    "proximity_hazard_checker_params": {
+      "type": "object",
+      "properties": {
+        "node_hz": {
+          "type": "number",
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "description": "Timer frequency in Hz."
+        },
+        "max_detection_range_m": {
+          "type": "number",
+          "default": 2.0,
+          "exclusiveMinimum": 0.0,
+          "description": "Polygon-to-polygon distance threshold in meters between the ego footprint and an object polygon. Objects beyond this are filtered out before sector assignment."
+        },
+        "include_unknown_objects": {
+          "type": "boolean",
+          "default": true,
+          "description": "If false, objects whose classification contains UNKNOWN are dropped before sector assignment."
+        },
+        "sector_range": {
+          "$ref": "#/definitions/sector_range_params"
+        },
+        "sector_boundary_tolerance_deg": {
+          "type": "number",
+          "default": 1.0,
+          "minimum": 0.0,
+          "description": "[degree] Angular tolerance applied to each side of every sector wedge boundary."
+        }
+      },
+      "required": [
+        "node_hz",
+        "max_detection_range_m",
+        "include_unknown_objects",
+        "sector_range",
+        "sector_boundary_tolerance_deg"
+      ],
+      "additionalProperties": false
+    },
+    "sector_range_params": {
+      "type": "object",
+      "description": "Per-sector angular extents as [from_deg, to_deg] in REP-103 bearing (+x forward, +y left, 0 = ahead). Half-open [from, to). The 8 sectors must tile the full circle without gaps or overlaps. Set to_deg < from_deg to wrap through +/-180 degrees.",
+      "properties": {
+        "front": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [-10.0, 10.0],
+          "description": "[from_deg, to_deg] angular extent of the FRONT sector."
+        },
+        "front_right": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [-30.0, -10.0],
+          "description": "[from_deg, to_deg] angular extent of the FRONT_RIGHT sector."
+        },
+        "right": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [-150.0, -30.0],
+          "description": "[from_deg, to_deg] angular extent of the RIGHT sector."
+        },
+        "rear_right": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [-170.0, -150.0],
+          "description": "[from_deg, to_deg] angular extent of the REAR_RIGHT sector."
+        },
+        "rear": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [170.0, -170.0],
+          "description": "[from_deg, to_deg] angular extent of the REAR sector. to_deg < from_deg wraps through +/-180 degrees."
+        },
+        "rear_left": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [150.0, 170.0],
+          "description": "[from_deg, to_deg] angular extent of the REAR_LEFT sector."
+        },
+        "left": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [30.0, 150.0],
+          "description": "[from_deg, to_deg] angular extent of the LEFT sector."
+        },
+        "front_left": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [10.0, 30.0],
+          "description": "[from_deg, to_deg] angular extent of the FRONT_LEFT sector."
+        }
+      },
+      "required": [
+        "front",
+        "front_right",
+        "right",
+        "rear_right",
+        "rear",
+        "rear_left",
+        "left",
+        "front_left"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
