@@ -149,7 +149,6 @@ ProximityHazardObjects ProximityHazardChecker::process(
         auto & slot = out.sectors[s];
         slot.has_object = true;
         slot.distance_m = static_cast<float>(std::sqrt(sector_cd));
-        slot.predicted_object = object;
       }
     }
   }

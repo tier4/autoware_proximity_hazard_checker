@@ -10,8 +10,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   DEPENDENCIES
   builtin_interfaces
   std_msgs
-  unique_identifier_msgs
-  autoware_perception_msgs
 )
 
 ament_auto_package()
