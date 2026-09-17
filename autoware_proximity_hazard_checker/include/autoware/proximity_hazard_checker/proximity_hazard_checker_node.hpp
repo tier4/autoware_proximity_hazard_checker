@@ -17,16 +17,15 @@
 
 #include "autoware/proximity_hazard_checker/proximity_hazard_checker.hpp"
 
-#include <autoware_utils_rclcpp/polling_subscriber.hpp>
+#include <autoware/agnocast_wrapper/node.hpp>
+#include <autoware/agnocast_wrapper/polling_subscriber.hpp>
+#include <autoware/agnocast_wrapper/tf2.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_perception_msgs/msg/predicted_objects.hpp>
 #include <autoware_proximity_hazard_checker_msgs/msg/proximity_hazard_objects.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
 
 #include <memory>
 #include <string>
@@ -37,7 +36,7 @@ using autoware_perception_msgs::msg::PredictedObjects;
 using autoware_proximity_hazard_checker_msgs::msg::ProximityHazardObjects;
 using nav_msgs::msg::Odometry;
 
-class ProximityHazardCheckerNode : public rclcpp::Node
+class ProximityHazardCheckerNode : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit ProximityHazardCheckerNode(const rclcpp::NodeOptions & options);
@@ -46,16 +45,18 @@ private:
   void on_timer();
   void publish_sector_markers(const std::string & frame_id);
 
-  autoware_utils_rclcpp::InterProcessPollingSubscriber<Odometry> sub_odometry_{
-    this, "~/input/odometry"};
-  autoware_utils_rclcpp::InterProcessPollingSubscriber<PredictedObjects> sub_objects_{
-    this, "~/input/objects"};
-  rclcpp::Publisher<ProximityHazardObjects>::SharedPtr pub_hazards_;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_debug_markers_;
-  rclcpp::TimerBase::SharedPtr timer_;
+  autoware::agnocast_wrapper::polling::PollingSubscriber<Odometry>::SharedPtr sub_odometry_ =
+    autoware::agnocast_wrapper::polling::create_polling_subscriber<Odometry>(
+      this, "~/input/odometry");
+  autoware::agnocast_wrapper::polling::PollingSubscriber<PredictedObjects>::SharedPtr sub_objects_ =
+    autoware::agnocast_wrapper::polling::create_polling_subscriber<PredictedObjects>(
+      this, "~/input/objects");
+  AUTOWARE_PUBLISHER_PTR(ProximityHazardObjects) pub_hazards_;
+  AUTOWARE_PUBLISHER_PTR(visualization_msgs::msg::MarkerArray) pub_debug_markers_;
+  AUTOWARE_TIMER_PTR timer_;
 
-  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-  std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
+  std::unique_ptr<autoware::agnocast_wrapper::Buffer> tf_buffer_;
+  std::unique_ptr<autoware::agnocast_wrapper::TransformListener> tf_listener_;
 
   std::shared_ptr<proximity_hazard_object::ParamListener> param_listener_;
   autoware_utils_geometry::LinearRing2d vehicle_footprint_;

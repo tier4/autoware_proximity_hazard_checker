@@ -31,19 +31,20 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace autoware::proximity_hazard_checker
 {
 ProximityHazardCheckerNode::ProximityHazardCheckerNode(const rclcpp::NodeOptions & options)
-: rclcpp::Node("proximity_hazard_checker", options)
+: autoware::agnocast_wrapper::Node("proximity_hazard_checker", options)
 {
   param_listener_ =
     std::make_shared<proximity_hazard_object::ParamListener>(get_node_parameters_interface());
 
   const double node_hz = param_listener_->get_params().node_hz;
   const double node_period_sec = 1.0 / node_hz;
-  timer_ = rclcpp::create_timer(
+  timer_ = autoware::agnocast_wrapper::create_timer(
     this, get_clock(), rclcpp::Duration::from_seconds(node_period_sec),
     std::bind(&ProximityHazardCheckerNode::on_timer, this));
 
@@ -53,8 +54,9 @@ ProximityHazardCheckerNode::ProximityHazardCheckerNode(const rclcpp::NodeOptions
   impl_ =
     std::make_unique<ProximityHazardChecker>(param_listener_->get_params(), vehicle_footprint_);
 
-  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
-  tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
+  tf_buffer_ = std::make_unique<autoware::agnocast_wrapper::Buffer>(get_clock());
+  tf_listener_ =
+    std::make_unique<autoware::agnocast_wrapper::TransformListener>(*tf_buffer_, *this);
 
   pub_hazards_ = create_publisher<ProximityHazardObjects>(
     "~/output/proximity_hazards", rclcpp::QoS{1}.reliable());
@@ -64,14 +66,14 @@ ProximityHazardCheckerNode::ProximityHazardCheckerNode(const rclcpp::NodeOptions
 
 void ProximityHazardCheckerNode::on_timer()
 {
-  const auto object_ptr = sub_objects_.take_data();
+  const auto object_ptr = sub_objects_->take_data();
 
   if (!object_ptr) {
     RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 5000, "Failed to take predicted objects data");
     return;
   }
 
-  const auto odometry_ptr = sub_odometry_.take_data();
+  const auto odometry_ptr = sub_odometry_->take_data();
   if (!odometry_ptr) {
     RCLCPP_WARN_THROTTLE(
       get_logger(), *get_clock(), 5000, "Failed to take predicted odometry data");
@@ -97,7 +99,6 @@ void ProximityHazardCheckerNode::on_timer()
 void ProximityHazardCheckerNode::publish_sector_markers(const std::string & frame_id)
 {
   using visualization_msgs::msg::Marker;
-  using visualization_msgs::msg::MarkerArray;
   namespace bg = boost::geometry;
 
   const auto params = param_listener_->get_params();
@@ -185,8 +186,8 @@ void ProximityHazardCheckerNode::publish_sector_markers(const std::string & fram
   color.b = 1.0f;
   color.a = 0.7f;
 
-  MarkerArray out;
-  out.markers.reserve(2 + sectors.size());
+  auto out = ALLOCATE_OUTPUT_MESSAGE_UNIQUE(pub_debug_markers_);
+  out->markers.reserve(2 + sectors.size());
 
   // Detection-zone outline (replaces the circle).
   {
@@ -209,7 +210,7 @@ void ProximityHazardCheckerNode::publish_sector_markers(const std::string & fram
       pt.z = 0.0;
       m.points.push_back(pt);
     }
-    out.markers.push_back(m);
+    out->markers.push_back(m);
   }
 
   // Sector boundary lines: each line starts at ego_center and extends along the
@@ -247,7 +248,7 @@ void ProximityHazardCheckerNode::publish_sector_markers(const std::string & fram
       m.points.push_back(p0);
       m.points.push_back(p1);
     }
-    out.markers.push_back(m);
+    out->markers.push_back(m);
   }
 
   // Sector labels placed at the sector's angular midpoint, slightly past the
@@ -286,10 +287,10 @@ void ProximityHazardCheckerNode::publish_sector_markers(const std::string & fram
     m.scale.z = 0.3;  // text height in meters
     m.color = color;
     m.text = s.name;
-    out.markers.push_back(m);
+    out->markers.push_back(m);
   }
 
-  pub_debug_markers_->publish(out);
+  pub_debug_markers_->publish(std::move(out));
 }
 
 }  // namespace autoware::proximity_hazard_checker

@@ -4,7 +4,10 @@
   <arg name="output_hazards" default="/hmi/proximity_hazards"/>
   <arg name="param_path" default="$(find-pkg-share autoware_proximity_hazard_checker)/config/proximity_hazard.yaml"/>
 
+  <include file="$(find-pkg-share autoware_agnocast_wrapper)/launch/agnocast_env.launch.xml"/>
+
   <node pkg="autoware_proximity_hazard_checker" exec="autoware_proximity_hazard_checker_node" name="proximity_hazard_checker" output="screen">
+    <env name="LD_PRELOAD" value="$(var ld_preload_value)"/>
     <remap from="~/input/odometry" to="$(var input_odometry)"/>
     <remap from="~/input/objects" to="$(var input_objects)"/>
     <remap from="~/output/proximity_hazards" to="$(var output_hazards)"/>
