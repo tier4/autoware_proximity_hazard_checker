@@ -17,9 +17,11 @@ target_link_libraries(${PROJECT_NAME}_component
   ${PROJECT_NAME}_param
 )
 
-rclcpp_components_register_node(${PROJECT_NAME}_component
+autoware_agnocast_wrapper_register_node(${PROJECT_NAME}_component
   PLUGIN "autoware::proximity_hazard_checker::ProximityHazardCheckerNode"
   EXECUTABLE ${PROJECT_NAME}_node
+  ROS2_EXECUTOR SingleThreadedExecutor
+  AGNOCAST_EXECUTOR AgnocastOnlyCallbackIsolatedExecutor
 )
 
 ament_auto_package(INSTALL_TO_SHARE
