@@ -30,7 +30,7 @@ jobs:
           echo "tag-name=${REF_NAME#beta/}" >> $GITHUB_OUTPUT
 
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
         with:
           fetch-depth: 0
           ref: ${{ steps.set-tag-name.outputs.ref-name }}
@@ -50,7 +50,7 @@ jobs:
 
       - name: Run generate-changelog
         id: generate-changelog
-        uses: autowarefoundation/autoware-github-actions/generate-changelog@v1
+        uses: autowarefoundation/autoware-github-actions/generate-changelog@v1.69.1
 
       - name: Select verb
         id: select-verb
